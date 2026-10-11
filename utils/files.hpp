@@ -21,7 +21,7 @@ static inline T align_padding(T v, int a) {
     return align_to(v, a) - v;
 }
 
-struct file_attr {
+struct magisk_file_attr {
     struct stat st;
     char con[128];
 };
@@ -41,7 +41,7 @@ protected:
 
 struct raw_file : public byte_data {
     std::string path;
-    file_attr attr;
+    magisk_file_attr attr;
 
     raw_file() : attr{} {}
     raw_file(const raw_file&) = delete;
@@ -67,12 +67,12 @@ void mv_dir(int src, int dest);
 void cp_afc(const char *src, const char *dest);
 void link_path(const char *src, const char *dest);
 void link_dir(int src, int dest);
-int getattr(const char *path, file_attr *a);
-int getattrat(int dirfd, const char *name, file_attr *a);
-int fgetattr(int fd, file_attr *a);
-int setattr(const char *path, file_attr *a);
-int setattrat(int dirfd, const char *name, file_attr *a);
-int fsetattr(int fd, file_attr *a);
+int getattr(const char *path, magisk_file_attr *a);
+int getattrat(int dirfd, const char *name, magisk_file_attr *a);
+int fgetattr(int fd, magisk_file_attr *a);
+int setattr(const char *path, magisk_file_attr *a);
+int setattrat(int dirfd, const char *name, magisk_file_attr *a);
+int fsetattr(int fd, magisk_file_attr *a);
 void fclone_attr(int src, int dest);
 void clone_attr(const char *src, const char *dest);
 void fd_full_read(int fd, void **buf, size_t *size);

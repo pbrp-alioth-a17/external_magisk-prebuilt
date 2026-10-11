@@ -88,7 +88,7 @@ void frm_rf(int dirfd) {
 }
 
 void mv_path(const char *src, const char *dest) {
-    file_attr attr;
+    magisk_file_attr attr;
     getattr(src, &attr);
     if (S_ISDIR(attr.st.st_mode)) {
         if (access(dest, F_OK) != 0) {
@@ -127,7 +127,7 @@ void mv_dir(int src, int dest) {
 }
 
 void cp_afc(const char *src, const char *dest) {
-    file_attr a;
+    magisk_file_attr a;
     getattr(src, &a);
 
     if (S_ISDIR(a.st.st_mode)) {
@@ -154,7 +154,7 @@ void clone_dir(int src, int dest) {
     auto dir = xopen_dir(src);
     run_finally f([&]{ close(dest); });
     for (dirent *entry; (entry = xreaddir(dir.get()));) {
-        file_attr a;
+        magisk_file_attr a;
         getattrat(src, entry->d_name, &a);
         switch (entry->d_type) {
             case DT_DIR: {
@@ -194,7 +194,7 @@ void link_dir(int src, int dest) {
     run_finally f([&]{ close(dest); });
     for (dirent *entry; (entry = xreaddir(dir.get()));) {
         if (entry->d_type == DT_DIR) {
-            file_attr a;
+            magisk_file_attr a;
             getattrat(src, entry->d_name, &a);
             xmkdirat(dest, entry->d_name, 0);
             setattrat(dest, entry->d_name, &a);
@@ -207,7 +207,7 @@ void link_dir(int src, int dest) {
     }
 }
 
-int getattr(const char *path, file_attr *a) {
+int getattr(const char *path, magisk_file_attr *a) {
     if (xlstat(path, &a->st) == -1)
         return -1;
     char *con;
@@ -218,13 +218,13 @@ int getattr(const char *path, file_attr *a) {
     return 0;
 }
 
-int getattrat(int dirfd, const char *name, file_attr *a) {
+int getattrat(int dirfd, const char *name, magisk_file_attr *a) {
     char path[4096];
     fd_pathat(dirfd, name, path, sizeof(path));
     return getattr(path, a);
 }
 
-int fgetattr(int fd, file_attr *a) {
+int fgetattr(int fd, magisk_file_attr *a) {
     if (xfstat(fd, &a->st) < 0)
         return -1;
     char *con;
@@ -235,7 +235,7 @@ int fgetattr(int fd, file_attr *a) {
     return 0;
 }
 
-int setattr(const char *path, file_attr *a) {
+int setattr(const char *path, magisk_file_attr *a) {
     if (chmod(path, a->st.st_mode & 0777) < 0)
         return -1;
     if (chown(path, a->st.st_uid, a->st.st_gid) < 0)
@@ -245,13 +245,13 @@ int setattr(const char *path, file_attr *a) {
     return 0;
 }
 
-int setattrat(int dirfd, const char *name, file_attr *a) {
+int setattrat(int dirfd, const char *name, magisk_file_attr *a) {
     char path[4096];
     fd_pathat(dirfd, name, path, sizeof(path));
     return setattr(path, a);
 }
 
-int fsetattr(int fd, file_attr *a) {
+int fsetattr(int fd, magisk_file_attr *a) {
     if (fchmod(fd, a->st.st_mode & 0777) < 0)
         return -1;
     if (fchown(fd, a->st.st_uid, a->st.st_gid) < 0)
@@ -262,13 +262,13 @@ int fsetattr(int fd, file_attr *a) {
 }
 
 void clone_attr(const char *src, const char *dest) {
-    file_attr a;
+    magisk_file_attr a;
     getattr(src, &a);
     setattr(dest, &a);
 }
 
 void fclone_attr(int src, int dest) {
-    file_attr a;
+    magisk_file_attr a;
     fgetattr(src, &a);
     fsetattr(dest, &a);
 }

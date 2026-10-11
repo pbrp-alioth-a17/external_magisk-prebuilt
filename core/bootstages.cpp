@@ -221,7 +221,7 @@ void node_entry::clone_skeleton() {
 	} else { return; }
 
 	if (status & IS_SKEL) {
-		file_attr attr;
+		magisk_file_attr attr;
 		getattr(full_path.c_str(), &attr);
 		LOGI("mnt_tmpfs : %s\n", full_path.c_str());
 		xmount("tmpfs", full_path.c_str(), "tmpfs", 0, nullptr);
